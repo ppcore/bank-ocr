@@ -1,11 +1,10 @@
 package org.bankocr;
 
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+
 import java.util.*;
 import java.util.stream.Stream;
 
-import org.junit.jupiter.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -71,19 +70,19 @@ class OCRTest {
         assertThrows(NumberFormatException.class, () -> OCR.ToLCD("34?"));
     }
 
-    @Test
-    @DisplayName("From LCD")
-    @ParameterizedTest
+    @DisplayName("from LCD format")
+    @ParameterizedTest(name = "input: {1}")
     @MethodSource("fromLCDArguments")
-    void fromLCD() {
-        for (int i = 0; i < 10; i++) {
-            assertEquals(Integer.toString(i), OCR.FromLCD(numbers[i]));
-        }
-        assertEquals("?", OCR.FromLCD(numbers[9].replaceFirst("_", " ")));
+    void fromLCD(String expected, String input) {
+        assertEquals(expected, OCR.FromLCD(input));
     }
-    static Stream<Arguments> fromLCDArguments(){
-        return Stream.of(
-                Arguments.arguments()
-        )
+
+    static Stream<Arguments> fromLCDArguments() {
+        var args = new ArrayList<Arguments>();
+        for (int i = 0; i < 10; i++) {
+            args.add(Arguments.of(Integer.toString(i), numbers[i]));
+        }
+        args.add(Arguments.of("?", numbers[9].replaceFirst("_", " ")));
+        return args.stream();
     }
 }

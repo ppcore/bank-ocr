@@ -61,16 +61,37 @@ class OCRTest {
                     "|_|" +
                     " _|"};
 
-    void toLCD(String in) {
-        for (int i = 0; i < 10; i++) {
-            assertEquals(numbers[i], OCR.ToLCD(Integer.toString(i)));
-        }
-        assertThrows(UnsupportedOperationException.class, () -> OCR.ToLCD("-1"));
-        assertThrows(UnsupportedOperationException.class, () -> OCR.ToLCD("10"));
-        assertThrows(NumberFormatException.class, () -> OCR.ToLCD("34?"));
+    @DisplayName("Test to LCD format")
+    @ParameterizedTest(name = "input: {1}")
+    @MethodSource("toLCDArguments")
+    void toLCD(String expected, String input) {
+        assertEquals(expected, OCR.ToLCD(input));
     }
 
-    @DisplayName("from LCD format")
+    static Stream<Arguments> toLCDArguments() {
+        var args = new ArrayList<Arguments>();
+        for (int i = 0; i < 10; i++) {
+            args.add(Arguments.of(numbers[i], Integer.toString(i)));
+        }
+        return args.stream();
+    }
+
+    @DisplayName("Test to LCD format exceptions")
+    @ParameterizedTest(name = "input: {1}")
+    @MethodSource("toLCDExceptionsArguments")
+    void toLCDExceptions(Class expected, String input) {
+        assertThrows(expected, () -> OCR.ToLCD(input));
+    }
+
+    static Stream<Arguments> toLCDExceptionsArguments() {
+        return Stream.of(
+                Arguments.arguments(UnsupportedOperationException.class, "-1"),
+                Arguments.arguments(UnsupportedOperationException.class, "10"),
+                Arguments.arguments(NumberFormatException.class, "34?")
+        );
+    }
+
+    @DisplayName("Test from LCD format")
     @ParameterizedTest(name = "input: {1}")
     @MethodSource("fromLCDArguments")
     void fromLCD(String expected, String input) {

@@ -3,6 +3,13 @@ package org.bankocr;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Account status enum<br/>
+ * ERR [ERROR] the account input contains an error and an alternative could be identified<br/>
+ * ILL [ILLEGAL] the account input could be parsed<br/>
+ * AMB [AMBIGUOUS] the account input contains an error, and its valid alternatives are more than one<br/>
+ * OK [OK] the account input was parsed without any issues<br/>
+ */
 enum AccountStatus {
     ERR,
     ILL,
@@ -39,7 +46,7 @@ public class Account {
         this.parsed = res.toString();
     }
 
-    public String[] GetAlternate() {
+    public String[] Alternatives() {
         List<String> alternates = new ArrayList<>();
         for (int i = 0; i < this.chars.length; i++) {
             int finalI = i;
@@ -62,7 +69,7 @@ public class Account {
     public AccountStatus Status() {
         if (this.IsValid())
             return AccountStatus.OK;
-        var alternatives = this.GetAlternate();
+        var alternatives = this.Alternatives();
         if (alternatives.length == 0)
             return AccountStatus.ILL;
         if (alternatives.length > 1)
@@ -80,14 +87,17 @@ public class Account {
         return sum % 11 == 0;
     }
 
-    @Override
-    public String toString() {
+    public String ToString() {
+        return this.parsed;
+    }
+
+    public String Report() {
         var extra = "";
         if (this.Status() == AccountStatus.AMB) {
-            extra = " => " + String.join(", ", this.GetAlternate());
+            extra = " => " + String.join(", ", this.Alternatives());
         }
         if (this.Status() == AccountStatus.ERR) {
-            extra = " => " + GetAlternate()[0];
+            extra = " => " + Alternatives()[0];
         }
         return String.format("%s %s%s", this.parsed, this.Status(), extra);
     }

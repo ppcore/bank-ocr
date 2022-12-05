@@ -87,7 +87,7 @@ class OCRTest {
         return Stream.of(
                 Arguments.arguments(UnsupportedOperationException.class, "-1"),
                 Arguments.arguments(UnsupportedOperationException.class, "10"),
-                Arguments.arguments(NumberFormatException.class, "34?")
+                Arguments.arguments(NumberFormatException.class, "?")
         );
     }
 

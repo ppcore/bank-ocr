@@ -4,9 +4,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 public class Main {
 
@@ -15,10 +14,13 @@ public class Main {
         var inputFilename = "test-input.txt";
         var outputFilename = "test-output.txt";
         List<Account> accounts = new ArrayList<Account>();
-
-        var lines = ReadFile(inputFilename);
-        System.out.println(lines.size() + " total lines");
-
+        List<String> lines;
+        try {
+            lines = Files.readAllLines(Paths.get((inputFilename)));
+        } catch (Exception e) {
+            System.err.println("Failed to read file lines: " + e);
+            return;
+        }
         for (int i = 0; i < lines.size(); i += 4) {
             accounts.add(new Account(new String[]{
                     lines.get(i),
@@ -28,14 +30,7 @@ public class Main {
         }
 
         StringBuilder sb = new StringBuilder();
-        accounts.forEach(a -> sb.append(a.toString() + "\n"));
+        accounts.forEach(a -> sb.append(a.Report() + "\n"));
         Files.write(Paths.get(outputFilename), sb.toString().getBytes());
-    }
-
-    public static List<String> ReadFile(String filename) throws IOException {
-        var path = Paths.get(filename);
-        var lines = Files.readAllLines(path);
-
-        return lines;
     }
 }
